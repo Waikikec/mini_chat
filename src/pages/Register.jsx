@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import Add from '../img/addAvatar.png';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { auth, db, storage } from '../firebase';
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { doc, setDoc } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { auth, db, storage } from '../firebase';
+import Add from '../img/addAvatar.png';
 
 const Register = () => {
   const [err, setErr] = useState(false);
@@ -74,7 +74,7 @@ const Register = () => {
           <button>Sign Up</button>
           {err && <span>Something went wrong!</span>}
         </form>
-        <p>You do have an acount? Login</p>
+        <p>You do have an acount? <Link to="login">Login</Link></p>
       </div>
     </div>
   );
