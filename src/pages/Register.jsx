@@ -2,7 +2,7 @@ import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from "react-router-dom";
 import { auth, db, storage } from '../firebase';
 import Add from '../img/addAvatar.png';
 
@@ -21,37 +21,35 @@ const Register = () => {
       //Create user authentication
       const res = await createUserWithEmailAndPassword(auth, email, password);
 
-      const storageRef = ref(storage, displayName);
-      const uploadTask = uploadBytesResumable(storageRef, file);
+      //Create an unique image name
+      const date = new Date().getTime();
+      const storageRef = ref(storage, `${displayName + date}`);
 
-      uploadTask.on(
-        (error) => {
-          setErr(true);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-            console.log(downloadURL);
-
-            //Update user profile with photo and nickname
+      await uploadBytesResumable(storageRef, file).then(() => {
+        getDownloadURL(storageRef).then(async (downloadURL) => {
+          try {
+            //Update profile
             await updateProfile(res.user, {
-              displayName: displayName,
+              displayName,
               photoURL: downloadURL,
             });
-
-            //create user db collection
-            await setDoc(doc(db, 'users', res.user.uid), {
+            //create user on firestore
+            await setDoc(doc(db, "users", res.user.uid), {
               uid: res.user.uid,
               displayName,
               email,
               photoURL: downloadURL,
             });
 
-            //create user chat db collection
-            await setDoc(doc('userChats', res.user.uid), {});
-            navigate('/');
-          });
-        }
-      );
+            //create empty user chats on firestore
+            await setDoc(doc(db, "userChats", res.user.uid), {});
+            navigate("/");
+          } catch (err) {
+            console.log(err);
+            setErr(true);
+          }
+        });
+      });
     } catch (error) {
       setErr(true);
     }
@@ -74,7 +72,7 @@ const Register = () => {
           <button>Sign Up</button>
           {err && <span>Something went wrong!</span>}
         </form>
-        <p>You do have an acount? <Link to="login">Login</Link></p>
+        <p>You do have an acount? <Link to="/login">Login</Link></p>
       </div>
     </div>
   );
