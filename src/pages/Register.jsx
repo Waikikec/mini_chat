@@ -34,7 +34,7 @@ const Register = () => {
 
             //Update user profile with photo and nickname
             await updateProfile(res.user, {
-              displayName,
+              displayName: displayName,
               photoURL: downloadURL,
             });
 
