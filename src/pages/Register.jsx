@@ -2,7 +2,7 @@ import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import React, { useState } from 'react';
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link } from 'react-router-dom';
 import { auth, db, storage } from '../firebase';
 import Add from '../img/addAvatar.png';
 
@@ -34,7 +34,7 @@ const Register = () => {
               photoURL: downloadURL,
             });
             //create user on firestore
-            await setDoc(doc(db, "users", res.user.uid), {
+            await setDoc(doc(db, 'users', res.user.uid), {
               uid: res.user.uid,
               displayName,
               email,
@@ -42,10 +42,9 @@ const Register = () => {
             });
 
             //create empty user chats on firestore
-            await setDoc(doc(db, "userChats", res.user.uid), {});
-            navigate("/");
+            await setDoc(doc(db, 'userChats', res.user.uid), {});
+            navigate('/');
           } catch (err) {
-            console.log(err);
             setErr(true);
           }
         });
@@ -72,7 +71,9 @@ const Register = () => {
           <button>Sign Up</button>
           {err && <span>Something went wrong!</span>}
         </form>
-        <p>You do have an acount? <Link to="/login">Login</Link></p>
+        <p>
+          You do have an acount? <Link to='/login'>Login</Link>
+        </p>
       </div>
     </div>
   );
