@@ -5,13 +5,12 @@ import {
   Timestamp,
   updateDoc,
 } from 'firebase/firestore';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import React, { useContext, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { AuthContext } from '../context/AuthContext';
 import { ChatContext } from '../context/ChatContext';
 import { db, storage } from '../firebase';
-
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import Attach from '../img/attach.png';
 import Img from '../img/img.png';
 
@@ -24,8 +23,9 @@ const Input = () => {
 
   const handleSend = async () => {
     if (image) {
-      const storageRef = ref(storage, uuid);
-
+      console.log(image);
+      const storageRef = ref(storage, uuid());
+      console.log(storageRef);
       await uploadBytesResumable(storageRef, image).then(() => {
         getDownloadURL(storageRef).then(async (downloadURL) => {
           try {
@@ -38,7 +38,9 @@ const Input = () => {
                 image: downloadURL,
               }),
             });
-          } catch (err) {}
+          } catch (err) {
+            console.log(err);
+          }
         });
       });
     } else {
